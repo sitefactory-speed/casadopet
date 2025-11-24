@@ -5,17 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Casa do Pet | Estética Animal Premium</title>
     
-    <!-- 1. Carregando React e ReactDOM via CDN -->
+    <!-- Carregando React, ReactDOM, Babel e Tailwind -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- 2. Carregando Babel para traduzir o JSX no navegador -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- 3. Carregando Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Configurações do Tailwind para as cores personalizadas -->
     <script>
         tailwind.config = {
             theme: {
@@ -36,95 +31,65 @@
             }
         }
     </script>
-
-    <style>
-        /* Ajustes finos de scroll */
-        html { scroll-behavior: smooth; }
-        body { -webkit-font-smoothing: antialiased; }
-    </style>
+    <style>html { scroll-behavior: smooth; } body { -webkit-font-smoothing: antialiased; }</style>
 </head>
 <body class="bg-cream text-primary">
 
-    <!-- Onde o React vai montar o site -->
     <div id="root"></div>
 
-    <!-- O CÓDIGO REACT -->
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- ÍCONES SVG (Recriados manualmente para evitar erros de importação) ---
-        const IconPhone = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-        );
-        const IconScissors = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
-        );
-        const IconDroplets = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.8-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"></path><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"></path></svg>
-        );
-        const IconStar = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-        );
-        const IconChevronDown = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="6 9 12 15 18 9"></polyline></svg>
-        );
-        const IconHeart = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        );
-        const IconShield = ({ size = 24, className = "" }) => (
-            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-        );
+        // --- ÍCONES ---
+        const IconPhone = ({ size = 24, className = "" }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>);
+        const IconScissors = ({ size = 24, className = "" }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>);
+        const IconDroplets = ({ size = 24, className = "" }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.8-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"></path><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"></path></svg>);
+        const IconStar = ({ size = 24, className = "" }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>);
+        const IconChevronDown = ({ size = 24, className = "" }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="6 9 12 15 18 9"></polyline></svg>);
+        const IconHeart = ({ size = 24, className = "" }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>);
+        const IconShield = ({ size = 24, className = "" }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>);
 
-        // --- LINKS DAS IMAGENS ATUALIZADOS ---
-        // Aqui mapeamos os arquivos que você salvou: hero1 (1).jpeg até hero1 (5).jpeg
-        // ATENÇÃO: Se as fotos não aparecerem, renomeie os arquivos para foto1.jpeg, foto2.jpeg...
-        // e atualize os nomes aqui embaixo tirando os parenteses e espaços.
+        // --- MAPA DE IMAGENS INTELIGENTE ---
+        // Distribui suas 5 fotos pelos 9 espaços do site
         const IMAGES = {
-            hero: "./hero1 (1).jpeg",      // Foto Principal
-            banho: "./hero1 (2).jpeg",     // Foto do Card Banho
-            tosa: "./hero1 (3).jpeg",      // Foto do Card Tosa
-            trimming: "./hero1 (4).jpeg",  // Foto do Card Trimming
-            parallax: "./hero1 (5).jpeg",  // Foto Grande (Parallax)
+            hero: "./foto1.jpeg",      // Foto Principal
+            
+            // Cards de Serviço (Usa fotos 2, 3 e 4)
+            banho: "./foto2.jpeg",     
+            tosa: "./foto3.jpeg",      
+            trimming: "./foto4.jpeg",  
+            
+            // Foto Grande de Destaque (Usa foto 5)
+            parallax: "./foto5.jpeg",  
+            
+            // Galeria (Repete as fotos de forma organizada para não ficar vazio)
             gallery: [
-                "./hero1 (2).jpeg",
-                "./hero1 (3).jpeg",
-                "./hero1 (4).jpeg",
-                "./hero1 (5).jpeg"
+                "./foto2.jpeg", // Repete Banho
+                "./foto3.jpeg", // Repete Tosa
+                "./foto4.jpeg", // Repete Trimming
+                "./foto5.jpeg"  // Repete Destaque
             ]
         };
 
         const WHATSAPP_NUMBER = "5586995735293";
         const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Gostaria de agendar um horário na Casa do Pet.`;
 
-        // --- COMPONENTES ---
-
+        // --- COMPONENTES (FadeIn, Botão, FAQ) ---
         const useIntersectionObserver = (options = {}) => {
             const elementRef = useRef(null);
             const [isVisible, setIsVisible] = useState(false);
-
             useEffect(() => {
                 const observer = new IntersectionObserver(([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-                    observer.disconnect(); 
-                }
+                if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); }
                 }, { threshold: 0.1, ...options });
-
-                if (elementRef.current) {
-                observer.observe(elementRef.current);
-                }
-
-                return () => {
-                if (elementRef.current) observer.unobserve(elementRef.current);
-                };
+                if (elementRef.current) observer.observe(elementRef.current);
+                return () => { if (elementRef.current) observer.unobserve(elementRef.current); };
             }, []);
-
             return [elementRef, isVisible];
         };
 
         const FadeIn = ({ children, delay = 0, direction = 'up', className = '' }) => {
             const [ref, isVisible] = useIntersectionObserver();
-            
             const getTransform = () => {
                 switch(direction) {
                 case 'up': return 'translate-y-10';
@@ -134,70 +99,36 @@
                 default: return 'translate-y-10';
                 }
             };
-
             return (
-                <div
-                ref={ref}
-                className={`transition-all duration-1000 ease-out ${className} ${
-                    isVisible ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${getTransform()}`
-                }`}
-                style={{ transitionDelay: `${delay}ms` }}
-                >
+                <div ref={ref} className={`transition-all duration-1000 ease-out ${className} ${isVisible ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${getTransform()}`}`} style={{ transitionDelay: `${delay}ms` }}>
                 {children}
                 </div>
             );
         };
 
         const GoldButton = ({ text, icon: Icon, fullWidth = false, pulse = false }) => (
-            <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`
-                relative overflow-hidden group inline-flex items-center justify-center gap-2
-                bg-gold text-white font-semibold tracking-wide
-                px-8 py-4 rounded-full shadow-[0_10px_20px_rgba(212,175,55,0.3)]
-                transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_15px_25px_rgba(212,175,55,0.5)]
-                ${fullWidth ? 'w-full' : ''}
-                ${pulse ? 'animate-pulse-slow' : ''}
-                `}
-            >
-                <span className="relative z-10 flex items-center gap-2">
-                {Icon && <Icon size={20} />}
-                {text}
-                </span>
+            <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className={`relative overflow-hidden group inline-flex items-center justify-center gap-2 bg-gold text-white font-semibold tracking-wide px-8 py-4 rounded-full shadow-[0_10px_20px_rgba(212,175,55,0.3)] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_15px_25px_rgba(212,175,55,0.5)] ${fullWidth ? 'w-full' : ''} ${pulse ? 'animate-pulse-slow' : ''}`}>
+                <span className="relative z-10 flex items-center gap-2">{Icon && <Icon size={20} />}{text}</span>
                 <div className="absolute inset-0 bg-white/20 translate-y-full rotate-45 group-hover:translate-y-0 transition-transform duration-500 ease-out" />
             </a>
         );
 
         const FAQItem = ({ question, answer }) => {
             const [isOpen, setIsOpen] = useState(false);
-
             return (
                 <div className="border-b border-gold/20 last:border-0">
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="w-full py-6 flex items-center justify-between text-left focus:outline-none group"
-                >
-                    <span className="text-lg font-medium text-primary group-hover:text-gold transition-colors">
-                    {question}
-                    </span>
-                    <IconChevronDown 
-                    className={`text-gold transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
-                    />
+                <button onClick={() => setIsOpen(!isOpen)} className="w-full py-6 flex items-center justify-between text-left focus:outline-none group">
+                    <span className="text-lg font-medium text-primary group-hover:text-gold transition-colors">{question}</span>
+                    <IconChevronDown className={`text-gold transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
-                <div 
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-40 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}
-                >
-                    <p className="text-gray-600 leading-relaxed">
-                    {answer}
-                    </p>
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-40 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}>
+                    <p className="text-gray-600 leading-relaxed">{answer}</p>
                 </div>
                 </div>
             );
         };
 
-        // --- COMPONENTE PRINCIPAL (LANDING PAGE) ---
+        // --- LANDING PAGE ---
         function CasaDoPetLanding() {
             return (
                 <div className="min-h-screen bg-cream font-sans selection:bg-gold selection:text-white overflow-x-hidden">
@@ -205,61 +136,32 @@
                 {/* 01 HERO SECTION */}
                 <section className="relative min-h-screen flex items-center pt-20 pb-20 lg:pt-0 lg:pb-0 overflow-hidden">
                     <div className="absolute top-0 right-0 w-2/3 h-full bg-primary skew-x-12 translate-x-1/3 z-0 hidden lg:block" />
-                    
                     <div className="container mx-auto px-6 relative z-10">
                     <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-                        
                         <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
                         <FadeIn direction="up">
-                            <div className="inline-block px-4 py-1 border border-gold rounded-full text-gold text-sm font-semibold tracking-widest uppercase mb-4">
-                            Excelência em Estética Animal
-                            </div>
-                            <h1 className="text-5xl lg:text-7xl font-bold text-primary leading-[1.1]">
-                            Casa do Pet <br/>
-                            <span className="text-gold font-serif italic">Cuidado Premium</span>
-                            </h1>
+                            <div className="inline-block px-4 py-1 border border-gold rounded-full text-gold text-sm font-semibold tracking-widest uppercase mb-4">Excelência em Estética Animal</div>
+                            <h1 className="text-5xl lg:text-7xl font-bold text-primary leading-[1.1]">Casa do Pet <br/><span className="text-gold font-serif italic">Cuidado Premium</span></h1>
                         </FadeIn>
-                        
                         <FadeIn delay={200} direction="up">
-                            <p className="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-                            "Cada animal tem seu tempo e espaço respeitados durante o atendimento."
-                            <br/>
-                            <span className="text-sm mt-2 block text-primary/60 font-medium">
-                                • Atendimento humanizado • Profissionais especializados
-                            </span>
-                            </p>
+                            <p className="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">"Cada animal tem seu tempo e espaço respeitados durante o atendimento."<br/><span className="text-sm mt-2 block text-primary/60 font-medium">• Atendimento humanizado • Profissionais especializados</span></p>
                         </FadeIn>
-
                         <FadeIn delay={400} direction="up">
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <GoldButton text="Agendar no WhatsApp" icon={IconPhone} pulse={true} />
-                            </div>
-                            <p className="mt-4 text-sm text-gray-500 flex items-center justify-center lg:justify-start gap-2">
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            Disponível agora: (86) 9 9573-5293
-                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"><GoldButton text="Agendar no WhatsApp" icon={IconPhone} pulse={true} /></div>
+                            <p className="mt-4 text-sm text-gray-500 flex items-center justify-center lg:justify-start gap-2"><span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>Disponível agora: (86) 9 9573-5293</p>
                         </FadeIn>
                         </div>
-
                         <div className="w-full lg:w-1/2 relative">
                         <FadeIn direction="right" delay={300} className="relative z-10">
                             <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:scale-[1.02] transition-transform duration-500">
-                                <img 
-                                src={IMAGES.hero} 
-                                alt="Cachorro fofo pós banho" 
-                                className="w-full h-[500px] lg:h-[650px] object-cover"
-                                onError={(e) => {e.target.style.display='none'; alert('Erro ao carregar imagem: ' + IMAGES.hero + '. Verifique se o nome do arquivo no GitHub está idêntico (incluindo espaços).');}}
-                                />
+                                <img src={IMAGES.hero} alt="Cachorro fofo pós banho" className="w-full h-[500px] lg:h-[650px] object-cover" 
+                                onError={(e) => {e.target.style.display='none'; alert('Atenção: A foto "foto1.jpeg" não foi encontrada. Verifique se renomeou o arquivo corretamente.');}} />
                                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent p-6 flex items-end">
-                                <div className="text-white">
-                                    <p className="font-serif italic text-xl">Seu melhor amigo,</p>
-                                    <p className="font-bold text-2xl">em sua melhor versão.</p>
-                                </div>
+                                <div className="text-white"><p className="font-serif italic text-xl">Seu melhor amigo,</p><p className="font-bold text-2xl">em sua melhor versão.</p></div>
                                 </div>
                             </div>
                         </FadeIn>
                         </div>
-
                     </div>
                     </div>
                 </section>
@@ -268,60 +170,31 @@
                 <section className="py-24 px-6 bg-white relative">
                     <div className="container mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 -mt-32 lg:mt-0">
-                        
                         <FadeIn delay={100} className="h-full">
                         <div className="group bg-cream rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col border border-transparent hover:border-gold/30">
-                            <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative">
-                            <img src={IMAGES.banho} alt="Banho" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
-                            <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                                <IconDroplets className="text-primary" size={20} />
-                            </div>
-                            </div>
+                            <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative"><img src={IMAGES.banho} alt="Banho" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" /><div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md"><IconDroplets className="text-primary" size={20} /></div></div>
                             <h3 className="text-2xl font-bold text-primary mb-2 group-hover:text-gold transition-colors">Banho Premium</h3>
                             <p className="text-gray-600 mb-4 flex-grow">Banho completo com corte de unhas, limpeza de ouvido, escovação e hidratação profunda.</p>
-                            <div className="flex justify-between items-center border-t border-gold/20 pt-4">
-                            <span className="text-primary font-bold">R$ 40 - R$ 150</span>
-                            <span className="text-gold text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span>
-                            </div>
+                            <div className="flex justify-between items-center border-t border-gold/20 pt-4"><span className="text-primary font-bold">R$ 40 - R$ 150</span><span className="text-gold text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span></div>
                         </div>
                         </FadeIn>
-
                         <FadeIn delay={200} className="h-full">
                         <div className="group bg-primary rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col relative overflow-hidden text-white">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gold rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
-                            
-                            <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative">
-                            <img src={IMAGES.tosa} alt="Tosa" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
-                            <div className="absolute top-4 right-4 bg-gold p-2 rounded-full shadow-md">
-                                <IconScissors className="text-white" size={20} />
-                            </div>
-                            </div>
+                            <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative"><img src={IMAGES.tosa} alt="Tosa" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" /><div className="absolute top-4 right-4 bg-gold p-2 rounded-full shadow-md"><IconScissors className="text-white" size={20} /></div></div>
                             <h3 className="text-2xl font-bold text-white mb-2">Tosa Especializada</h3>
                             <p className="text-gray-300 mb-4 flex-grow">Tosas higiênicas, na máquina ou tesoura, respeitando o padrão de cada raça.</p>
-                            <div className="flex justify-between items-center border-t border-white/20 pt-4">
-                            <span className="text-gold font-bold">R$ 20 - R$ 120</span>
-                            <span className="text-white text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span>
-                            </div>
+                            <div className="flex justify-between items-center border-t border-white/20 pt-4"><span className="text-gold font-bold">R$ 20 - R$ 120</span><span className="text-white text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span></div>
                         </div>
                         </FadeIn>
-
                         <FadeIn delay={300} className="h-full">
                         <div className="group bg-cream rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col border border-transparent hover:border-gold/30">
-                            <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative">
-                            <img src={IMAGES.trimming} alt="Trimming" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
-                            <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
-                                <IconStar className="text-primary" size={20} />
-                            </div>
-                            </div>
+                            <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative"><img src={IMAGES.trimming} alt="Trimming" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" /><div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md"><IconStar className="text-primary" size={20} /></div></div>
                             <h3 className="text-2xl font-bold text-primary mb-2 group-hover:text-gold transition-colors">Trimming & Acabamentos</h3>
                             <p className="text-gray-600 mb-4 flex-grow">Técnicas manuais para raças específicas, preservando a textura natural da pelagem.</p>
-                            <div className="flex justify-between items-center border-t border-gold/20 pt-4">
-                            <span className="text-primary font-bold">R$ 90 - R$ 120</span>
-                            <span className="text-gold text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span>
-                            </div>
+                            <div className="flex justify-between items-center border-t border-gold/20 pt-4"><span className="text-primary font-bold">R$ 90 - R$ 120</span><span className="text-gold text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span></div>
                         </div>
                         </FadeIn>
-
                     </div>
                     </div>
                 </section>
@@ -329,65 +202,24 @@
                 {/* 03 SERVIÇOS */}
                 <section className="py-20 bg-cream">
                     <div className="container mx-auto px-6 max-w-5xl">
-                    <FadeIn>
-                        <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold text-primary mb-4">Menu de Serviços</h2>
-                        <div className="w-24 h-1 bg-gold mx-auto rounded-full"></div>
-                        </div>
-                    </FadeIn>
-
+                    <FadeIn><div className="text-center mb-16"><h2 className="text-4xl font-bold text-primary mb-4">Menu de Serviços</h2><div className="w-24 h-1 bg-gold mx-auto rounded-full"></div></div></FadeIn>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         <FadeIn direction="left">
                         <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
-                            <div className="flex items-center gap-3 mb-6">
-                            <div className="p-3 bg-primary rounded-lg text-gold">
-                                <IconDroplets size={24} />
-                            </div>
-                            <h3 className="text-2xl font-bold text-primary">Banho & Higiene</h3>
-                            </div>
-                            
+                            <div className="flex items-center gap-3 mb-6"><div className="p-3 bg-primary rounded-lg text-gold"><IconDroplets size={24} /></div><h3 className="text-2xl font-bold text-primary">Banho & Higiene</h3></div>
                             <ul className="space-y-6">
-                            {[
-                                { name: "Banho Pequeno Porte", price: "R$ 40,00" },
-                                { name: "Banho Médio Porte", price: "R$ 45,00" },
-                                { name: "Banho Grande Porte", price: "R$ 80 - R$ 150" },
-                                { name: "Tosa Higiênica (Adicional)", price: "R$ 20,00", desc: "Aparo de barriga, genitálias e coxins." },
-                            ].map((item, idx) => (
-                                <li key={idx} className="flex flex-col border-b border-dashed border-gray-200 pb-4 last:border-0 last:pb-0">
-                                <div className="flex justify-between items-baseline w-full">
-                                    <span className="font-medium text-gray-800 text-lg">{item.name}</span>
-                                    <span className="font-bold text-gold">{item.price}</span>
-                                </div>
-                                {item.desc && <p className="text-sm text-gray-500 mt-1">{item.desc}</p>}
-                                </li>
+                            {[{ name: "Banho Pequeno Porte", price: "R$ 40,00" }, { name: "Banho Médio Porte", price: "R$ 45,00" }, { name: "Banho Grande Porte", price: "R$ 80 - R$ 150" }, { name: "Tosa Higiênica (Adicional)", price: "R$ 20,00", desc: "Aparo de barriga, genitálias e coxins." }].map((item, idx) => (
+                                <li key={idx} className="flex flex-col border-b border-dashed border-gray-200 pb-4 last:border-0 last:pb-0"><div className="flex justify-between items-baseline w-full"><span className="font-medium text-gray-800 text-lg">{item.name}</span><span className="font-bold text-gold">{item.price}</span></div>{item.desc && <p className="text-sm text-gray-500 mt-1">{item.desc}</p>}</li>
                             ))}
                             </ul>
                         </div>
                         </FadeIn>
-
                         <FadeIn direction="right">
                         <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
-                            <div className="flex items-center gap-3 mb-6">
-                            <div className="p-3 bg-gold rounded-lg text-white">
-                                <IconScissors size={24} />
-                            </div>
-                            <h3 className="text-2xl font-bold text-primary">Tosas & Especiais</h3>
-                            </div>
-
+                            <div className="flex items-center gap-3 mb-6"><div className="p-3 bg-gold rounded-lg text-white"><IconScissors size={24} /></div><h3 className="text-2xl font-bold text-primary">Tosas & Especiais</h3></div>
                             <ul className="space-y-5">
-                            {[
-                                { name: "Tosa na Máquina", price: "R$ 70,00" },
-                                { name: "Tosa na Tesoura", price: "R$ 80,00" },
-                                { name: "Trimming Pêlo Armado", price: "R$ 120,00" },
-                                { name: "Trimming Golden", price: "R$ 120,00" },
-                                { name: "Trimming Cocker", price: "R$ 90,00" },
-                                { name: "Remoção Pelagem Morta", price: "R$ 50,00" },
-                                { name: "Handstripping", price: "R$ 80,00" },
-                            ].map((item, idx) => (
-                                <li key={idx} className="flex justify-between items-center border-b border-dashed border-gray-200 pb-3 last:border-0 last:pb-0">
-                                <span className="font-medium text-gray-800">{item.name}</span>
-                                <span className="font-bold text-gold">{item.price}</span>
-                                </li>
+                            {[{ name: "Tosa na Máquina", price: "R$ 70,00" }, { name: "Tosa na Tesoura", price: "R$ 80,00" }, { name: "Trimming Pêlo Armado", price: "R$ 120,00" }, { name: "Trimming Golden", price: "R$ 120,00" }, { name: "Trimming Cocker", price: "R$ 90,00" }, { name: "Remoção Pelagem Morta", price: "R$ 50,00" }, { name: "Handstripping", price: "R$ 80,00" }].map((item, idx) => (
+                                <li key={idx} className="flex justify-between items-center border-b border-dashed border-gray-200 pb-3 last:border-0 last:pb-0"><span className="font-medium text-gray-800">{item.name}</span><span className="font-bold text-gold">{item.price}</span></li>
                             ))}
                             </ul>
                         </div>
@@ -401,27 +233,11 @@
                     <div className="absolute inset-0 bg-primary/70"></div>
                     <div className="container mx-auto px-6 relative z-10 text-center text-white">
                     <FadeIn>
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gold/20 backdrop-blur-sm rounded-full border border-gold/50 text-gold mb-6">
-                        <IconStar size={16} fill="currentColor" />
-                        <span className="font-semibold tracking-wider text-sm">PADRÃO CASA DO PET</span>
-                        </div>
-                        
-                        <h2 className="text-3xl md:text-5xl font-bold font-serif leading-tight mb-8 max-w-4xl mx-auto">
-                        "Cada animal tem seu tempo e espaço respeitados durante o atendimento."
-                        </h2>
-
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gold/20 backdrop-blur-sm rounded-full border border-gold/50 text-gold mb-6"><IconStar size={16} fill="currentColor" /><span className="font-semibold tracking-wider text-sm">PADRÃO CASA DO PET</span></div>
+                        <h2 className="text-3xl md:text-5xl font-bold font-serif leading-tight mb-8 max-w-4xl mx-auto">"Cada animal tem seu tempo e espaço respeitados durante o atendimento."</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto mt-12">
-                        {[
-                            { icon: IconHeart, text: "Atendimento Humanizado" },
-                            { icon: IconShield, text: "Ambiente Seguro" },
-                            { icon: IconScissors, text: "Profissionais Especializados" },
-                        ].map((item, idx) => (
-                            <div key={idx} className="flex flex-col items-center gap-3 group">
-                            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-gold transition-colors duration-300">
-                                <item.icon size={32} className="text-white" />
-                            </div>
-                            <span className="font-medium text-lg">{item.text}</span>
-                            </div>
+                        {[{ icon: IconHeart, text: "Atendimento Humanizado" }, { icon: IconShield, text: "Ambiente Seguro" }, { icon: IconScissors, text: "Profissionais Especializados" }].map((item, idx) => (
+                            <div key={idx} className="flex flex-col items-center gap-3 group"><div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-gold transition-colors duration-300"><item.icon size={32} className="text-white" /></div><span className="font-medium text-lg">{item.text}</span></div>
                         ))}
                         </div>
                     </FadeIn>
@@ -431,27 +247,12 @@
                 {/* 05 GALERIA */}
                 <section className="py-24 bg-white">
                     <div className="container mx-auto px-6">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-                        <div>
-                        <h2 className="text-4xl font-bold text-primary mb-2">Nossa Galeria</h2>
-                        <p className="text-gray-500">Resultados reais que falam por si.</p>
-                        </div>
-                    </div>
-
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-12"><div><h2 className="text-4xl font-bold text-primary mb-2">Nossa Galeria</h2><p className="text-gray-500">Resultados reais que falam por si.</p></div></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto md:h-[500px]">
-                        <div className="lg:col-span-2 row-span-2 relative group overflow-hidden rounded-2xl h-64 md:h-full">
-                        <img src={IMAGES.gallery[0]} alt="Galeria 1" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
-                        </div>
-                        <div className="col-span-1 relative group overflow-hidden rounded-2xl h-64 md:h-full">
-                        <img src={IMAGES.gallery[1]} alt="Galeria 2" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                        </div>
-                        <div className="col-span-1 relative group overflow-hidden rounded-2xl h-64 md:h-full">
-                        <img src={IMAGES.gallery[2]} alt="Galeria 3" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                        </div>
-                        <div className="lg:col-span-2 relative group overflow-hidden rounded-2xl h-64 md:h-full hidden lg:block">
-                        <img src={IMAGES.gallery[3]} alt="Galeria 4" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                        </div>
+                        <div className="lg:col-span-2 row-span-2 relative group overflow-hidden rounded-2xl h-64 md:h-full"><img src={IMAGES.gallery[0]} alt="Galeria 1" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" /><div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" /></div>
+                        <div className="col-span-1 relative group overflow-hidden rounded-2xl h-64 md:h-full"><img src={IMAGES.gallery[1]} alt="Galeria 2" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" /></div>
+                        <div className="col-span-1 relative group overflow-hidden rounded-2xl h-64 md:h-full"><img src={IMAGES.gallery[2]} alt="Galeria 3" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" /></div>
+                        <div className="lg:col-span-2 relative group overflow-hidden rounded-2xl h-64 md:h-full hidden lg:block"><img src={IMAGES.gallery[3]} alt="Galeria 4" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" /></div>
                     </div>
                     </div>
                 </section>
@@ -460,56 +261,30 @@
                 <section className="bg-primary py-20 px-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-gold opacity-10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
                     <div className="container mx-auto max-w-4xl text-center relative z-10">
-                    <FadeIn>
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                        O cuidado que seu pet merece,<br/> a um toque de distância.
-                        </h2>
-                        <GoldButton text="Falar Agora no WhatsApp" icon={IconPhone} pulse={true} />
-                        <p className="mt-6 text-sm text-gray-400">
-                        Atendimento de Terça a Sábado • (86) 9 9573-5293
-                        </p>
-                    </FadeIn>
+                    <FadeIn><h2 className="text-4xl md:text-5xl font-bold text-white mb-6">O cuidado que seu pet merece,<br/> a um toque de distância.</h2><GoldButton text="Falar Agora no WhatsApp" icon={IconPhone} pulse={true} /><p className="mt-6 text-sm text-gray-400">Atendimento de Terça a Sábado • (86) 9 9573-5293</p></FadeIn>
                     </div>
                 </section>
 
                 {/* 07 FAQ */}
                 <section className="py-20 bg-cream">
                     <div className="container mx-auto px-6 max-w-3xl">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-primary">Dúvidas Frequentes</h2>
-                    </div>
+                    <div className="text-center mb-12"><h2 className="text-3xl font-bold text-primary">Dúvidas Frequentes</h2></div>
                     <div className="space-y-4">
-                        <FAQItem 
-                        question="Como funciona o processo de banho?" 
-                        answer="Nosso banho é completo e detalhado. Utilizamos produtos premium adequados ao tipo de pelagem do seu pet. O processo inclui corte de unhas, limpeza profunda de ouvidos, escovação de dentes e uma hidratação final."
-                        />
-                        <FAQItem 
-                        question="Vocês aceitam todas as raças?" 
-                        answer="Sim! Atendemos desde cães de pequeno porte até raças gigantes. Nossa equipe é treinada para lidar com diferentes temperamentos e tipos de pelagem."
-                        />
-                        <FAQItem 
-                        question="Como funciona o agendamento via WhatsApp?" 
-                        answer="É super simples! Basta clicar em qualquer botão 'Agendar' aqui no site. Você será direcionado para nossa conversa no WhatsApp."
-                        />
+                        <FAQItem question="Como funciona o processo de banho?" answer="Nosso banho é completo e detalhado. Utilizamos produtos premium adequados ao tipo de pelagem do seu pet. O processo inclui corte de unhas, limpeza profunda de ouvidos, escovação de dentes e uma hidratação final." />
+                        <FAQItem question="Vocês aceitam todas as raças?" answer="Sim! Atendemos desde cães de pequeno porte até raças gigantes. Nossa equipe é treinada para lidar com diferentes temperamentos e tipos de pelagem." />
+                        <FAQItem question="Como funciona o agendamento via WhatsApp?" answer="É super simples! Basta clicar em qualquer botão 'Agendar' aqui no site. Você será direcionado para nossa conversa no WhatsApp." />
                     </div>
                     </div>
                 </section>
 
                 {/* 08 FOOTER */}
                 <footer className="bg-white py-12 border-t border-gray-100">
-                    <div className="container mx-auto px-6 flex flex-col items-center text-center">
-                    <h3 className="text-2xl font-serif italic text-primary mb-2">Casa do Pet</h3>
-                    <GoldButton text="Agendar pelo WhatsApp" icon={IconPhone} />
-                    <div className="mt-12 text-xs text-gray-400">
-                        &copy; 2025 Casa do Pet. Todos os direitos reservados. Barras - PI.
-                    </div>
-                    </div>
+                    <div className="container mx-auto px-6 flex flex-col items-center text-center"><h3 className="text-2xl font-serif italic text-primary mb-2">Casa do Pet</h3><GoldButton text="Agendar pelo WhatsApp" icon={IconPhone} /><div className="mt-12 text-xs text-gray-400">&copy; 2025 Casa do Pet. Todos os direitos reservados. Barras - PI.</div></div>
                 </footer>
                 </div>
             );
         }
 
-        // Renderizando o App
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<CasaDoPetLanding />);
     </script>
