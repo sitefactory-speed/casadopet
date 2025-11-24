@@ -75,18 +75,21 @@
             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
         );
 
-        // --- LINKS DAS IMAGENS (Substituir pelos seus arquivos locais se desejar) ---
+        // --- LINKS DAS IMAGENS ATUALIZADOS ---
+        // Aqui mapeamos os arquivos que você salvou: hero1 (1).jpeg até hero1 (5).jpeg
+        // ATENÇÃO: Se as fotos não aparecerem, renomeie os arquivos para foto1.jpeg, foto2.jpeg...
+        // e atualize os nomes aqui embaixo tirando os parenteses e espaços.
         const IMAGES = {
-            hero: "https://images.unsplash.com/photo-1591946614720-90a587da4a36?q=80&w=1000&auto=format&fit=crop", 
-            banho: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?q=80&w=1000&auto=format&fit=crop", 
-            tosa: "https://images.unsplash.com/photo-1516366434321-728a48e6b7bf?q=80&w=1000&auto=format&fit=crop",
-            trimming: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1000&auto=format&fit=crop",
-            parallax: "https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=1920&auto=format&fit=crop",
+            hero: "./hero1 (1).jpeg",      // Foto Principal
+            banho: "./hero1 (2).jpeg",     // Foto do Card Banho
+            tosa: "./hero1 (3).jpeg",      // Foto do Card Tosa
+            trimming: "./hero1 (4).jpeg",  // Foto do Card Trimming
+            parallax: "./hero1 (5).jpeg",  // Foto Grande (Parallax)
             gallery: [
-                "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?q=80&w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9205?q=80&w=800&auto=format&fit=crop",
-                "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=800&auto=format&fit=crop"
+                "./hero1 (2).jpeg",
+                "./hero1 (3).jpeg",
+                "./hero1 (4).jpeg",
+                "./hero1 (5).jpeg"
             ]
         };
 
@@ -245,6 +248,7 @@
                                 src={IMAGES.hero} 
                                 alt="Cachorro fofo pós banho" 
                                 className="w-full h-[500px] lg:h-[650px] object-cover"
+                                onError={(e) => {e.target.style.display='none'; alert('Erro ao carregar imagem: ' + IMAGES.hero + '. Verifique se o nome do arquivo no GitHub está idêntico (incluindo espaços).');}}
                                 />
                                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent p-6 flex items-end">
                                 <div className="text-white">
