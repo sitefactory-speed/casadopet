@@ -1,0 +1,484 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Phone, Scissors, Droplets, Star, ChevronDown, Check, Clock, Shield, Heart } from 'lucide-react';
+
+/**
+ * IMAGENS SUBSTITUTAS (Unsplash)
+ * Substituímos as locais por links públicos para que o preview funcione perfeitamente.
+ * * Hero: Spitz/Lulu fofo (parecido com o da gravata)
+ * Banho: Golden Retriever sendo lavado/molhado
+ * Tosa: Cachorro pequeno sendo cuidado (estilo Lulu preto)
+ * Trimming: Cocker Spaniel (para representar a raça específica)
+ * Parallax: Pastor Branco/Husky (para o impacto visual)
+ */
+const IMAGES = {
+  hero: "https://images.unsplash.com/photo-1591946614720-90a587da4a36?q=80&w=1000&auto=format&fit=crop", // Lulu/Spitz fofo
+  banho: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?q=80&w=1000&auto=format&fit=crop", // Golden Retriever
+  tosa: "https://images.unsplash.com/photo-1516366434321-728a48e6b7bf?q=80&w=1000&auto=format&fit=crop", // Tosa / Cuidado
+  trimming: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1000&auto=format&fit=crop", // Cocker Spaniel
+  parallax: "https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=1920&auto=format&fit=crop", // Cão branco grande porte
+  gallery: [
+    "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop", // Cão 1
+    "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?q=80&w=800&auto=format&fit=crop", // Cão 2
+    "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9205?q=80&w=800&auto=format&fit=crop", // Cão 3
+    "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=800&auto=format&fit=crop"  // Cão 4
+  ]
+};
+
+const WHATSAPP_NUMBER = "5586995735293";
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=Olá! Gostaria de agendar um horário na Casa do Pet.`;
+
+// Hook para animações de entrada (Scroll Reveal)
+const useIntersectionObserver = (options = {}) => {
+  const elementRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect(); // Anima apenas uma vez
+      }
+    }, { threshold: 0.1, ...options });
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      if (elementRef.current) observer.unobserve(elementRef.current);
+    };
+  }, []);
+
+  return [elementRef, isVisible];
+};
+
+const FadeIn = ({ children, delay = 0, direction = 'up', className = '' }) => {
+  const [ref, isVisible] = useIntersectionObserver();
+  
+  const getTransform = () => {
+    switch(direction) {
+      case 'up': return 'translate-y-10';
+      case 'down': return '-translate-y-10';
+      case 'left': return '-translate-x-10';
+      case 'right': return 'translate-x-10';
+      default: return 'translate-y-10';
+    }
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ease-out ${className} ${
+        isVisible ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${getTransform()}`
+      }`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+};
+
+// Componente de Botão Premium
+const GoldButton = ({ text, icon: Icon, fullWidth = false, pulse = false }) => (
+  <a
+    href={WHATSAPP_LINK}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`
+      relative overflow-hidden group inline-flex items-center justify-center gap-2
+      bg-[#D4AF37] text-white font-semibold tracking-wide
+      px-8 py-4 rounded-full shadow-[0_10px_20px_rgba(212,175,55,0.3)]
+      transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_15px_25px_rgba(212,175,55,0.5)]
+      ${fullWidth ? 'w-full' : ''}
+      ${pulse ? 'animate-pulse-slow' : ''}
+    `}
+  >
+    <span className="relative z-10 flex items-center gap-2">
+      {Icon && <Icon size={20} />}
+      {text}
+    </span>
+    <div className="absolute inset-0 bg-white/20 translate-y-full rotate-45 group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+  </a>
+);
+
+// Componente FAQ Item
+const FAQItem = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-[#D4AF37]/20 last:border-0">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full py-6 flex items-center justify-between text-left focus:outline-none group"
+      >
+        <span className="text-lg font-medium text-[#0D1B2A] group-hover:text-[#D4AF37] transition-colors">
+          {question}
+        </span>
+        <ChevronDown 
+          className={`text-[#D4AF37] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
+        />
+      </button>
+      <div 
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-40 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}
+      >
+        <p className="text-gray-600 leading-relaxed">
+          {answer}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default function CasaDoPetLanding() {
+  return (
+    <div className="min-h-screen bg-[#F7F4EF] font-sans selection:bg-[#D4AF37] selection:text-white overflow-x-hidden">
+      
+      {/* 01 HERO SECTION */}
+      <section className="relative min-h-screen flex items-center pt-20 pb-20 lg:pt-0 lg:pb-0 overflow-hidden">
+        {/* Background Decor */}
+        <div className="absolute top-0 right-0 w-2/3 h-full bg-[#0D1B2A] skew-x-12 translate-x-1/3 z-0 hidden lg:block" />
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+            
+            {/* Texto Hero */}
+            <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
+              <FadeIn direction="up">
+                <div className="inline-block px-4 py-1 border border-[#D4AF37] rounded-full text-[#D4AF37] text-sm font-semibold tracking-widest uppercase mb-4">
+                  Excelência em Estética Animal
+                </div>
+                <h1 className="text-5xl lg:text-7xl font-bold text-[#0D1B2A] leading-[1.1]">
+                  Casa do Pet <br/>
+                  <span className="text-[#D4AF37] font-serif italic">Cuidado Premium</span>
+                </h1>
+              </FadeIn>
+              
+              <FadeIn delay={200} direction="up">
+                <p className="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+                  "Cada animal tem seu tempo e espaço respeitados durante o atendimento."
+                  <br/>
+                  <span className="text-sm mt-2 block text-[#0D1B2A]/60 font-medium">
+                    • Atendimento humanizado • Profissionais especializados
+                  </span>
+                </p>
+              </FadeIn>
+
+              <FadeIn delay={400} direction="up">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <GoldButton text="Agendar no WhatsApp" icon={Phone} pulse={true} />
+                </div>
+                <p className="mt-4 text-sm text-gray-500 flex items-center justify-center lg:justify-start gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  Disponível agora: (86) 9 9573-5293
+                </p>
+              </FadeIn>
+            </div>
+
+            {/* Imagem Hero */}
+            <div className="w-full lg:w-1/2 relative">
+              <FadeIn direction="right" delay={300} className="relative z-10">
+                 <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:scale-[1.02] transition-transform duration-500">
+                    <img 
+                      src={IMAGES.hero} 
+                      alt="Cachorro fofo pós banho" 
+                      className="w-full h-[500px] lg:h-[650px] object-cover"
+                    />
+                    {/* Glass Effect Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent p-6 flex items-end">
+                      <div className="text-white">
+                        <p className="font-serif italic text-xl">Seu melhor amigo,</p>
+                        <p className="font-bold text-2xl">em sua melhor versão.</p>
+                      </div>
+                    </div>
+                 </div>
+                 {/* Floating Elements */}
+                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#D4AF37]/20 rounded-full blur-2xl animate-pulse" />
+                 <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#0D1B2A]/20 rounded-full blur-2xl" />
+              </FadeIn>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 02 DESTAQUES (TOP 3 SERVIÇOS) */}
+      <section className="py-24 px-6 bg-white relative">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10 -mt-32 lg:mt-0">
+            
+            {/* Card 1 - Banho */}
+            <FadeIn delay={100} className="h-full">
+              <div className="group bg-[#F7F4EF] rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col border border-transparent hover:border-[#D4AF37]/30">
+                <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative">
+                  <img src={IMAGES.banho} alt="Banho" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                    <Droplets className="text-[#0D1B2A]" size={20} />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-[#0D1B2A] mb-2 group-hover:text-[#D4AF37] transition-colors">Banho Premium</h3>
+                <p className="text-gray-600 mb-4 flex-grow">Banho completo com corte de unhas, limpeza de ouvido, escovação e hidratação profunda.</p>
+                <div className="flex justify-between items-center border-t border-[#D4AF37]/20 pt-4">
+                  <span className="text-[#0D1B2A] font-bold">R$ 40 - R$ 150</span>
+                  <span className="text-[#D4AF37] text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span>
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* Card 2 - Tosa */}
+            <FadeIn delay={200} className="h-full">
+              <div className="group bg-[#0D1B2A] rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col relative overflow-hidden text-white">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37] rounded-full blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+                
+                <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative">
+                  <img src={IMAGES.tosa} alt="Tosa" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 right-4 bg-[#D4AF37] p-2 rounded-full shadow-md">
+                    <Scissors className="text-white" size={20} />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Tosa Especializada</h3>
+                <p className="text-gray-300 mb-4 flex-grow">Tosas higiênicas, na máquina ou tesoura, respeitando o padrão de cada raça.</p>
+                <div className="flex justify-between items-center border-t border-white/20 pt-4">
+                  <span className="text-[#D4AF37] font-bold">R$ 20 - R$ 120</span>
+                  <span className="text-white text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span>
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* Card 3 - Trimming */}
+            <FadeIn delay={300} className="h-full">
+              <div className="group bg-[#F7F4EF] rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col border border-transparent hover:border-[#D4AF37]/30">
+                <div className="h-48 w-full rounded-xl overflow-hidden mb-6 relative">
+                  <img src={IMAGES.trimming} alt="Trimming" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md">
+                    <Star className="text-[#0D1B2A]" size={20} />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-[#0D1B2A] mb-2 group-hover:text-[#D4AF37] transition-colors">Trimming & Acabamentos</h3>
+                <p className="text-gray-600 mb-4 flex-grow">Técnicas manuais para raças específicas, preservando a textura natural da pelagem.</p>
+                <div className="flex justify-between items-center border-t border-[#D4AF37]/20 pt-4">
+                  <span className="text-[#0D1B2A] font-bold">R$ 90 - R$ 120</span>
+                  <span className="text-[#D4AF37] text-sm font-medium hover:underline cursor-pointer">Saiba mais →</span>
+                </div>
+              </div>
+            </FadeIn>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 03 TABELA DE SERVIÇOS DETALHADA */}
+      <section className="py-20 bg-[#F7F4EF]">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <FadeIn>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-[#0D1B2A] mb-4">Menu de Serviços</h2>
+              <div className="w-24 h-1 bg-[#D4AF37] mx-auto rounded-full"></div>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Coluna 1 */}
+            <FadeIn direction="left">
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 bg-[#0D1B2A] rounded-lg text-[#D4AF37]">
+                    <Droplets size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0D1B2A]">Banho & Higiene</h3>
+                </div>
+                
+                <ul className="space-y-6">
+                  {[
+                    { name: "Banho Pequeno Porte", price: "R$ 40,00" },
+                    { name: "Banho Médio Porte", price: "R$ 45,00" },
+                    { name: "Banho Grande Porte", price: "R$ 80 - R$ 150" },
+                    { name: "Tosa Higiênica (Adicional)", price: "R$ 20,00", desc: "Aparo de barriga, genitálias e coxins." },
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex flex-col border-b border-dashed border-gray-200 pb-4 last:border-0 last:pb-0">
+                      <div className="flex justify-between items-baseline w-full">
+                        <span className="font-medium text-gray-800 text-lg">{item.name}</span>
+                        <span className="font-bold text-[#D4AF37]">{item.price}</span>
+                      </div>
+                      {item.desc && <p className="text-sm text-gray-500 mt-1">{item.desc}</p>}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-6 bg-[#F7F4EF] p-4 rounded-lg text-sm text-[#0D1B2A]/80">
+                  <span className="font-bold block mb-1">Incluso no banho:</span>
+                  Corte de unhas, limpeza de ouvidos, escovação de dentes e hidratação.
+                </div>
+              </div>
+            </FadeIn>
+
+            {/* Coluna 2 */}
+            <FadeIn direction="right">
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-3 bg-[#D4AF37] rounded-lg text-white">
+                    <Scissors size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#0D1B2A]">Tosas & Especiais</h3>
+                </div>
+
+                <ul className="space-y-5">
+                  {[
+                    { name: "Tosa na Máquina", price: "R$ 70,00" },
+                    { name: "Tosa na Tesoura", price: "R$ 80,00" },
+                    { name: "Trimming Pêlo Armado", price: "R$ 120,00" },
+                    { name: "Trimming Golden", price: "R$ 120,00" },
+                    { name: "Trimming Cocker", price: "R$ 90,00" },
+                    { name: "Remoção Pelagem Morta", price: "R$ 50,00" },
+                    { name: "Handstripping", price: "R$ 80,00" },
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex justify-between items-center border-b border-dashed border-gray-200 pb-3 last:border-0 last:pb-0">
+                      <span className="font-medium text-gray-800">{item.name}</span>
+                      <span className="font-bold text-[#D4AF37]">{item.price}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                  <h4 className="text-[#0D1B2A] font-bold mb-3">Adicionais</h4>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="bg-gray-50 px-3 py-2 rounded">Desembolo: a partir R$ 50</div>
+                    <div className="bg-gray-50 px-3 py-2 rounded">Unhas: R$ 15</div>
+                    <div className="bg-gray-50 px-3 py-2 rounded">Pata/Focinho: R$ 25</div>
+                    <div className="bg-gray-50 px-3 py-2 rounded">Carinha: R$ 25</div>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* 04 DIFERENCIAL (PARALLAX) */}
+      <section className="relative py-32 bg-fixed bg-center bg-cover" style={{ backgroundImage: `url('${IMAGES.parallax}')` }}>
+        {/* Overlay Escuro */}
+        <div className="absolute inset-0 bg-[#0D1B2A]/70"></div>
+        
+        <div className="container mx-auto px-6 relative z-10 text-center text-white">
+          <FadeIn>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37]/20 backdrop-blur-sm rounded-full border border-[#D4AF37]/50 text-[#D4AF37] mb-6">
+              <Star size={16} fill="currentColor" />
+              <span className="font-semibold tracking-wider text-sm">PADRÃO CASA DO PET</span>
+            </div>
+            
+            <h2 className="text-3xl md:text-5xl font-bold font-serif leading-tight mb-8 max-w-4xl mx-auto">
+              "Cada animal tem seu tempo e espaço respeitados durante o atendimento."
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto mt-12">
+              {[
+                { icon: Heart, text: "Atendimento Humanizado" },
+                { icon: Shield, text: "Ambiente Seguro" },
+                { icon: Scissors, text: "Profissionais Especializados" },
+              ].map((item, idx) => (
+                <div key={idx} className="flex flex-col items-center gap-3 group">
+                  <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-[#D4AF37] transition-colors duration-300">
+                    <item.icon size={32} className="text-white" />
+                  </div>
+                  <span className="font-medium text-lg">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* 05 GALERIA DE RESULTADOS */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+            <div>
+              <h2 className="text-4xl font-bold text-[#0D1B2A] mb-2">Nossa Galeria</h2>
+              <p className="text-gray-500">Resultados reais que falam por si.</p>
+            </div>
+            <a href="https://instagram.com" className="hidden md:inline-block text-[#D4AF37] font-semibold border-b-2 border-[#D4AF37] pb-1 hover:text-[#0D1B2A] hover:border-[#0D1B2A] transition-all mt-4 md:mt-0">
+              Ver mais no Instagram
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto md:h-[500px]">
+            {/* Imagem Grande Esquerda */}
+            <div className="lg:col-span-2 row-span-2 relative group overflow-hidden rounded-2xl h-64 md:h-full">
+              <img src={IMAGES.gallery[0]} alt="Galeria 1" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
+            </div>
+
+            {/* Grid Direita */}
+            <div className="col-span-1 relative group overflow-hidden rounded-2xl h-64 md:h-full">
+               <img src={IMAGES.gallery[1]} alt="Galeria 2" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            </div>
+            <div className="col-span-1 relative group overflow-hidden rounded-2xl h-64 md:h-full">
+               <img src={IMAGES.gallery[2]} alt="Galeria 3" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            </div>
+            <div className="lg:col-span-2 relative group overflow-hidden rounded-2xl h-64 md:h-full hidden lg:block">
+               <img src={IMAGES.gallery[3]} alt="Galeria 4" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 06 CTA FORTE */}
+      <section className="bg-[#0D1B2A] py-20 px-6 relative overflow-hidden">
+        {/* Abstract Shapes */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37] opacity-10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#3D4A40] opacity-20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
+
+        <div className="container mx-auto max-w-4xl text-center relative z-10">
+          <FadeIn>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              O cuidado que seu pet merece,<br/> a um toque de distância.
+            </h2>
+            <p className="text-gray-300 text-lg mb-10 max-w-2xl mx-auto">
+              Agende agora o banho ou tosa. Atendimento rápido, equipe especializada e aquele carinho que faz toda a diferença.
+            </p>
+            <GoldButton text="Falar Agora no WhatsApp" icon={Phone} pulse={true} />
+            <p className="mt-6 text-sm text-gray-400">
+              Atendimento de Terça a Sábado • (86) 9 9573-5293
+            </p>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* 07 FAQ */}
+      <section className="py-20 bg-[#F7F4EF]">
+        <div className="container mx-auto px-6 max-w-3xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-[#0D1B2A]">Dúvidas Frequentes</h2>
+          </div>
+          
+          <div className="space-y-4">
+            <FAQItem 
+              question="Como funciona o processo de banho?" 
+              answer="Nosso banho é completo e detalhado. Utilizamos produtos premium adequados ao tipo de pelagem do seu pet. O processo inclui corte de unhas, limpeza profunda de ouvidos, escovação de dentes e uma hidratação final para deixar o pelo macio e brilhante."
+            />
+            <FAQItem 
+              question="Vocês aceitam todas as raças?" 
+              answer="Sim! Atendemos desde cães de pequeno porte até raças gigantes. Nossa equipe é treinada para lidar com diferentes temperamentos e tipos de pelagem, sempre com respeito e segurança."
+            />
+            <FAQItem 
+              question="Como funciona o agendamento via WhatsApp?" 
+              answer="É super simples! Basta clicar em qualquer botão 'Agendar' aqui no site. Você será direcionado para nossa conversa no WhatsApp, onde combinaremos o melhor dia e horário para você e seu pet."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 08 FINAL ELEGANTE */}
+      <footer className="bg-white py-12 border-t border-gray-100">
+        <div className="container mx-auto px-6 flex flex-col items-center text-center">
+          <h3 className="text-2xl font-serif italic text-[#0D1B2A] mb-2">Casa do Pet</h3>
+          <p className="text-gray-500 mb-8">Seu pet tratado com respeito, carinho e excelência.</p>
+          
+          <GoldButton text="Agendar pelo WhatsApp" icon={Phone} />
+          
+          <div className="mt-12 text-xs text-gray-400">
+            &copy; {new Date().getFullYear()} Casa do Pet. Todos os direitos reservados. Barras - PI.
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
